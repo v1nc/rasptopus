@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { Table, Progress, Row, Col, Container, Card, CardTitle, CardText, Button, Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 import logo from './raspberry.svg';
 import './App.css';
+import request from 'superagent';
+import callback from 'superagent';
 
+var Dropzone = require('react-dropzone');
 
 class App extends Component {
   constructor(props) {
@@ -18,9 +21,19 @@ class App extends Component {
       isOpen: !this.state.isOpen
     });
   }
+  onDrop(acceptedFiles, rejectedFiles) {
+      var req = request.post('/react/backend/upload.php');
+        acceptedFiles.forEach((file)=> {
+            req.attach(file.name, file);
+        });
+        req.then(function(res){ console.log(res.text); })
+    }
   render() {
     const array = ["cpu","ram","uptime"];
     const array2 = [25,36,47];
+    const array11 = ["cpu","ram","uptime"];
+    const array22 = [25,36,47];
+    const array33 = [25,36,47];
     return (
       <div>
         <Navbar color="faded" light toggleable>
@@ -29,7 +42,7 @@ class App extends Component {
           <a class="navbar-brand" rel="home" href="#" title="Rasptopus">
             <img id ="headlogo" class="headlogo"  src={logo}/>
           </a>
-          RaspGod
+          Rasptopus
           </NavbarBrand>
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
@@ -61,36 +74,22 @@ class App extends Component {
                        </Card>
                   </Col>
                   <Col xs="6">
-                    <Card block inverse color="info">
-                      <CardTitle>Servers</CardTitle>
+                    <ServerCard array={array11} array2={array22} array3={array33}/><br/>
+                      <Card block inverse color="info">
+                      <CardTitle>Login</CardTitle>
                       <CardText>
-                        <Table size="sm" hover>
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-                              <th>Status</th>
-                              <th>Uptime</th>
-                           </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <th>SSH</th>
-                              <td>ok</td>
-                              <td>3s</td>
-                            </tr>
-                            <tr>
-                              <th>FTP</th>
-                              <td>dead</td>
-                              <td>05:06:07</td>
-                            </tr>
-                            <tr>
-                              <th>Apache2</th>
-                              <td>error</td>
-                              <td>08:09:10</td>
-                            </tr>
-
-                          </tbody>
-                        </Table>
+                                <Dropzone accept="image/*" multiple="false" onDrop={this.onDrop}>{({ isDragActive, isDragReject, acceptedFiles, rejectedFiles }) => {
+    if (isDragActive) {
+      return "This file is authorized";
+    }
+    if (isDragReject) {
+      return "This file is not authorized";
+    }
+    return acceptedFiles.length || rejectedFiles.length
+      ? `Accepted ${acceptedFiles.length}, rejected ${rejectedFiles.length} files`
+      : "Try dropping some files";
+  }}<div>Drop key to login</div></Dropzone>
+                        
                       </CardText>
                     </Card>
                   </Col>
@@ -120,6 +119,35 @@ class HardwareCard extends React.Component {
                             </CardText>
                             <Button color="secondary">Button</Button>
                        </Card>
+    );
+  }
+}
+class ServerCard extends React.Component {
+   constructor(props) {
+    super(props);
+  }
+  render() {
+    const content = this.props.array.map((item, index)=>
+    <tr><td>{item}</td><td>{this.props.array2[index]}</td><td>{this.props.array3[index]}</td></tr>
+    );
+    return (
+                    <Card block inverse color="info">
+                      <CardTitle>Servers</CardTitle>
+                      <CardText>
+                        <Table size="sm" hover>
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Status</th>
+                              <th>Uptime</th>
+                           </tr>
+                          </thead>
+                          <tbody>
+                          {content}
+                          </tbody>
+                        </Table>
+                      </CardText>
+                    </Card>
     );
   }
 }
