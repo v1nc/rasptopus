@@ -26,7 +26,7 @@ class App extends Component {
         <Navbar color="faded" light toggleable>
           <NavbarToggler right onClick={this.toggle} />
           <NavbarBrand href="/">
-          <a class="navbar-brand" rel="home" href="#" title="RaspGod">
+          <a class="navbar-brand" rel="home" href="#" title="Rasptopus">
             <img id ="headlogo" class="headlogo"  src={logo}/>
           </a>
           RaspGod
